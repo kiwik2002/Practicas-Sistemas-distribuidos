@@ -32,6 +32,10 @@ public class UsuarioLocal {
         teclado.nextLine(); // Elimina retorno de carro del buffer de entrada
         return opcion;
     }
+    private static String solActividad(Scanner teclado) {
+    	System.out.print("Introduce la actividad");
+    	return teclado.nextLine();
+    }
 
     /**
      * Programa principal. Muestra el menú repetidamente y atiende las peticiones del usuario.
@@ -54,7 +58,7 @@ public class UsuarioLocal {
             switch (opcion) {
                 case 0 -> { // Guardar los datos en el fichero y salir del programa
 
-                    // POR IMPLEMENTAR
+                 
 
 
                 }
@@ -65,17 +69,17 @@ public class UsuarioLocal {
 
                 }
                 case 2 -> { // Listar los plazas disponibles de una actividad
-
-                    // POR IMPLEMENTAR
+                	String actividad = solActividad(teclado);
+                    gestor.listaPlazasDisponibles(actividad);
 
 
 
                 }
                 case 3 -> { // Hacer una reserva
-
-
-                    // POR IMPLEMENTAR
-
+                		
+                	String actividad = solActividad(teclado);
+                	DiaSemana  dia = null ;
+                	gestor.hazReserva(codUsuario, actividad,dia.leerDia(teclado), Integer.valueOf(teclado.nextLine()));
 
 
                 }
@@ -89,8 +93,7 @@ public class UsuarioLocal {
                 case 5 -> { // Cancelar una reserva
 
 
-                    // POR IMPLEMENTAR
-
+                		gestor.cancelaReserva(codUsuario,Integer.valueOf(teclado.nextLine()));
 
 
                 }

@@ -23,6 +23,8 @@ public class GestorReservas {
 	// Sesiones de la próxima semana indexadas por el día de la semana. Empiezan mañana, cuando se puede reservar
 	final private HashMap<DiaSemana, Vector<Sesion>> sesionesSemana;
 	// Reservas indexadas por el código de usuario
+	
+	
 	final private HashMap<String, Vector<Reserva>> reservas;
 
 	/**
@@ -194,7 +196,7 @@ public class GestorReservas {
 	 * @return La sesión encontrada o `null` si no existe una sesión con esos parámetros.
 	 */
 	Sesion buscaSesion(String actividad, DiaSemana dia, long hora) {
-        // POR IMPLEMENTAR
+        
         return null; // MODIFICAR
 	}
 
