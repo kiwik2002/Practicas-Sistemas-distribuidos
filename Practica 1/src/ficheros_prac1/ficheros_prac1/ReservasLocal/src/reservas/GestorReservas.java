@@ -18,6 +18,8 @@ import java.util.Vector;
 
 public class GestorReservas {
 
+	private static final Vector<Sesion> NULL = null;
+
 	private FileWriter os;			// stream para escribir los datos de las reservas en el fichero
 
 	// Sesiones de la próxima semana indexadas por el día de la semana. Empiezan mañana, cuando se puede reservar
@@ -196,8 +198,15 @@ public class GestorReservas {
 	 * @return La sesión encontrada o `null` si no existe una sesión con esos parámetros.
 	 */
 	Sesion buscaSesion(String actividad, DiaSemana dia, long hora) {
-        
-        return null; // MODIFICAR
+        Vector<Sesion> sesionesDia = sesionesSemana.get(dia);
+        if(sesionesDia != null) {
+        	for(Sesion  clase : sesionesDia){
+        		if(clase.getActividad().equals(actividad) && clase.getHora() == hora ) {
+        			return clase;
+        		}
+        	}
+        }
+        return null; 
 	}
 
 
