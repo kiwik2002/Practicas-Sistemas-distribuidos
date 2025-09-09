@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 
 
@@ -184,7 +185,12 @@ public class GestorReservas {
 	 * @param array	JSONArray con los datos de los paquetes
 	 */
 	private void rellenaDiccionarios(JSONArray array) {
-        // POR IMPLEMENTAR
+		Iterator<JSONObject> iterJsonObject = array.iterator();
+		while(iterJsonObject.hasNext()) {
+			JSONObject info = iterJsonObject.next();
+			//aqui tienes que extraer info
+		}
+        
 	}
 
 
