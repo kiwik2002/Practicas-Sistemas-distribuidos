@@ -53,8 +53,13 @@ public class Reserva implements Serializable {
      */
     @SuppressWarnings("unchecked")
     public JSONObject toJSON() {
-        // POR IMPLEMENTAR
-        return null; // MODIFICAR
+        JSONObject info = new JSONObject();
+        info.put("codReserva",codReserva);
+        info.put(codUsuario, info);
+        info.put("actividad", actividad);
+        info.put("dia", dia);
+        info.put("hora", hora);
+        return info; // MODIFICAR
     }
     
 
