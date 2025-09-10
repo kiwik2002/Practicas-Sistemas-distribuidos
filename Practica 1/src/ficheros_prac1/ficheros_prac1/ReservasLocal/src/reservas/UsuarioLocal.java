@@ -32,9 +32,15 @@ public class UsuarioLocal {
         teclado.nextLine(); // Elimina retorno de carro del buffer de entrada
         return opcion;
     }
+    //metodo parar solicitar las actividades para evitar repetir codigo
     private static String solActividad(Scanner teclado) {
     	System.out.print("Introduce la actividad");
     	return teclado.nextLine();
+    }
+    //metodo para solicitar horas y evitar repetir codigo 
+    private static Long solHora(Scanner teclado) {
+    	System.out.print("Introduce la actividad");
+    	return Long.valueOf(teclado.nextLine());
     }
 
     /**
@@ -66,12 +72,12 @@ public class UsuarioLocal {
 
                     // POR IMPLEMENTAR
 
-
+                		
                 }
                 case 2 -> { // Listar los plazas disponibles de una actividad
                 	String actividad = solActividad(teclado);
                     gestor.listaPlazasDisponibles(actividad);
-
+                    
 
 
                 }
@@ -79,7 +85,7 @@ public class UsuarioLocal {
                 		
                 	String actividad = solActividad(teclado);
                 	DiaSemana  dia = null ;
-                	gestor.hazReserva(codUsuario, actividad,dia.leerDia(teclado), Integer.valueOf(teclado.nextLine()));
+                	gestor.hazReserva(codUsuario, actividad,dia.leerDia(teclado), solHora(teclado));
 
 
                 }
@@ -93,7 +99,7 @@ public class UsuarioLocal {
                 case 5 -> { // Cancelar una reserva
 
 
-                		gestor.cancelaReserva(codUsuario,Integer.valueOf(teclado.nextLine()));
+                		gestor.cancelaReserva(codUsuario,solHora(teclado));
 
 
                 }
