@@ -207,7 +207,19 @@ public class GestorReservas {
 		Iterator<JSONObject> iterJsonObject = array.iterator();
 		while(iterJsonObject.hasNext()) {
 			JSONObject info = iterJsonObject.next();
-			//aqui tienes que extraer info
+			//aqui tienes que extraer info del Usuario
+			String codigoCliente = info.get("codigo").toString();
+			JSONArray infoReservasUsuario = (JSONArray) info.get("reservas"); 
+			Iterator<JSONObject> iterReservas = infoReservasUsuario.iterator();
+			Vector<Reserva> reservasUsuario = new Vector();
+			while(iterReservas.hasNext()) {
+				JSONObject inforeserva = iterReservas.next();
+				Reserva nuevaReserva = new Reserva(inforeserva);
+				reservasUsuario.add(nuevaReserva);
+					
+			}	
+			reservas.put(codigoCliente, reservasUsuario);
+		
 		}
         
 	}
