@@ -64,14 +64,21 @@ public class UsuarioLocal {
             switch (opcion) {
                 case 0 -> { // Guardar los datos en el fichero y salir del programa
 
-                 
-
-
+                	gestor.guardaDatos();
+                	System.out.print("Sesión cerrada y datos guardados");
+                	System.exit(0);
                 }
                 case 1 -> { // Listar los paquetes enviados por el cliente
-
                     // POR IMPLEMENTAR
-
+                	   JSONArray reservas = gestor.listaReservasUsuario(codUsuario);
+                       if (reservas.size() == 0) {
+                           System.out.println("No tienes reservas.");
+                       } else {
+                           System.out.println("Tus reservas:");
+                           for (int i = 0; i < reservas.size(); i++) {
+                               System.out.println(reservas.get(i).toString());
+                           }
+                       }
                 		
                 }
                 case 2 -> { // Listar los plazas disponibles de una actividad
@@ -93,7 +100,10 @@ public class UsuarioLocal {
 
 
                     // POR IMPLEMENTAR
-
+                	System.out.print("Introduce el número de reserva");
+               
+                	//temporal el segundo solHora implementar SolCodigo reserva 
+                	gestor.modificaReserva(codUsuario,solHora(teclado),DiaSemana.leerDia(teclado),solHora(teclado));
 
                 }
                 case 5 -> { // Cancelar una reserva
