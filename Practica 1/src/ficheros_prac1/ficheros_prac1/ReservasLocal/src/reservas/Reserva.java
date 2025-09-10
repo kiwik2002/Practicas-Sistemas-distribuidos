@@ -55,7 +55,7 @@ public class Reserva implements Serializable {
     public JSONObject toJSON() {
         JSONObject info = new JSONObject();
         info.put("codReserva",codReserva);
-        info.put(codUsuario, info);
+        info.put("codUsuario", codUsuario);
         info.put("actividad", actividad);
         info.put("dia", dia);
         info.put("hora", hora);
