@@ -14,6 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 
@@ -142,11 +143,29 @@ public class GestorReservas {
 	 * Escribe en el fichero un array JSON con los datos de las reservas guardadas en el diccionario
 	 *
 	 * @param os	stream de escritura asociado al fichero de datos
+	 * @throws IOException 
 	 */
 	@SuppressWarnings("unchecked")
-	private void escribeFichero(FileWriter os) {
+	private void escribeFichero(FileWriter os) throws IOException {
 		// POR IMPLEMENTAR
-
+		JSONArray arrayJSONUsuarios = new JSONArray() ;
+		Set<String> keys = reservas.keySet();
+		for(String key : keys) {
+			JSONArray arrayJSONReservas = new JSONArray() ;
+			Vector<Reserva> reservasUser = reservas.get(key);
+			for(Reserva reserva :reservasUser) {
+				JSONObject objetoJSON = reserva.toJSON();
+				arrayJSONReservas.add(objetoJSON); 
+			}
+			JSONObject usuarioJSON = new JSONObject();
+			usuarioJSON.put("codigo", key);
+	        usuarioJSON.put("reservas", arrayJSONReservas);
+			arrayJSONUsuarios.add(usuarioJSON);
+		}
+		os.write(arrayJSONUsuarios.toJSONString());
+		os.flush();
+		
+		
 	}
 
 
