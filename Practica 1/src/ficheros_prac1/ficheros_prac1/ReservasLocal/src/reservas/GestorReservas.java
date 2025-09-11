@@ -299,6 +299,11 @@ public class GestorReservas {
 	 */
 	private Reserva buscaReserva(Vector<Reserva> vector, long codReserva) {
         // POR IMPLEMENTAR
+		for(Reserva reservaUsuario : vector) {
+			if(reservaUsuario.getCodReserva()==codReserva) {
+				return reservaUsuario;
+			}
+		}
         return null; // MODIFICAR
 	}
 
@@ -317,6 +322,7 @@ public class GestorReservas {
 	 */
 	public JSONObject modificaReserva(String codUsuario, long codReserva, DiaSemana nuevoDia, long nuevaHora) {
         // POR IMPLEMENTAR
+		
         return null; // MODIFICAR
 	}
 
