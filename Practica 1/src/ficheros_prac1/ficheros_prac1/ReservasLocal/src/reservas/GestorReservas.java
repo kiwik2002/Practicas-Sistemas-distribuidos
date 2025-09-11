@@ -255,7 +255,31 @@ public class GestorReservas {
 	@SuppressWarnings("unchecked")
 	public JSONObject hazReserva(String codUsuario, String actividad, DiaSemana dia, long hora) {
         // POR IMPLEMENTAR
-        return null; // MODIFICAR
+
+		Vector<Sesion> sesionesDia = sesionesSemana.get(dia);
+		for(Sesion sesion : sesionesDia) {
+			if(sesion.getActividad().equals(actividad) && sesion.getHora() == hora ) {
+				//hay una sesion como la que tu quieres vamos a ver si hay sitio
+				long plazas = sesion.getPlazas();
+				if(plazas >= 1) {
+					sesion.setPlazas(plazas-1);
+					Reserva nuevaReserva = new Reserva(codUsuario,actividad,dia,hora);
+					Vector<Reserva> reservasUsuario = reservas.get(codUsuario);
+					if(reservasUsuario==null) {
+						reservasUsuario = new Vector();
+						reservas.put(codUsuario, reservasUsuario);
+					}
+					reservasUsuario.add(nuevaReserva);
+					return nuevaReserva.toJSON();
+					
+				}else {
+					//existe la sesion pero no hay plazas
+					return new JSONObject();
+				}
+			}
+		}
+		//no hay una sesion
+        return new JSONObject();
 	}
 
 
