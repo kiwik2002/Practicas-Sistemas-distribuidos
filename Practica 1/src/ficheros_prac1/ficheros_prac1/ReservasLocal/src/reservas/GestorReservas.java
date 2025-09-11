@@ -254,11 +254,9 @@ public class GestorReservas {
 	 */
 	@SuppressWarnings("unchecked")
 	public JSONObject hazReserva(String codUsuario, String actividad, DiaSemana dia, long hora) {
-        // POR IMPLEMENTAR
-
-		Vector<Sesion> sesionesDia = sesionesSemana.get(dia);
-		for(Sesion sesion : sesionesDia) {
-			if(sesion.getActividad().equals(actividad) && sesion.getHora() == hora ) {
+        // POR IMPLEMENTA
+			Sesion sesion = buscaSesion(actividad,dia,hora);
+ 			if(true) {
 				//hay una sesion como la que tu quieres vamos a ver si hay sitio
 				long plazas = sesion.getPlazas();
 				if(plazas >= 1) {
@@ -276,8 +274,8 @@ public class GestorReservas {
 					//existe la sesion pero no hay plazas
 					return new JSONObject();
 				}
-			}
-		}
+ 			}
+		
 		//no hay una sesion
         return new JSONObject();
 	}
