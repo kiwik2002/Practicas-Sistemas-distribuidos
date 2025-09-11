@@ -222,9 +222,18 @@ public class GestorReservas {
 	 * @param codUsuario El código del usuario cuyas reservas se desea listar
 	 * @return Un `JSONArray` que contiene la representación JSON de cada reserva del usuario.
 	 */
+	//duda que hago si el usuario no existe 
 	@SuppressWarnings("unchecked")
 	public JSONArray listaReservasUsuario(String codUsuario) {
         // POR IMPLEMENTAR
+		Vector<Reserva> reservasUsuario = reservas.get(codUsuario);
+		if(reservasUsuario != null) {
+			JSONArray array = new JSONArray();
+			for(Reserva reserva : reservasUsuario) {
+				array.add(reserva.toJSON());
+			}
+			return array ;
+		}
         return null; // MODIFICAR
 	}
 
