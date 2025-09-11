@@ -14,6 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 
@@ -248,7 +249,17 @@ public class GestorReservas {
 	@SuppressWarnings("unchecked")
 	public JSONArray listaPlazasDisponibles(String actividad) {
         // POR IMPLEMENTAR
-        return null; // MODIFICAR
+		JSONArray array = new JSONArray();
+		Set<DiaSemana> semana = sesionesSemana.keySet();
+		for(DiaSemana dia  : semana ) {
+			Vector<Sesion> sesionesDia = sesionesSemana.get(dia);
+			for(Sesion sesion : sesionesDia) {
+				if(sesion.getActividad().equals(actividad)&&sesion.getPlazas()>=1) {
+					array.add(sesion.toJSON());
+				}
+			}
+		}
+		return array; // MODIFICAR
 	}
 
 
