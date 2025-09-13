@@ -347,6 +347,12 @@ public class GestorReservas {
 	 */
 	public JSONObject cancelaReserva(String codUsuario, long codReserva) {
         // POR IMPLEMENTAR
+		Vector<Reserva> reservasUsuario = reservas.get(codUsuario);
+		for(Reserva reserva : reservasUsuario) {
+			if(reserva.getCodReserva() == codReserva) {
+				return reserva.toJSON();
+			}
+		}
         return null; // MODIFICAR
 	}
 
