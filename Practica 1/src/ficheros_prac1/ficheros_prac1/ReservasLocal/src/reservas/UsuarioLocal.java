@@ -39,7 +39,7 @@ public class UsuarioLocal {
     }
     //metodo para solicitar horas y evitar repetir codigo 
     private static Long solHora(Scanner teclado) {
-    	System.out.print("Introduce la actividad");
+    	System.out.print("Introduce la hora de la actividad");
     	return Long.valueOf(teclado.nextLine());
     }
 
