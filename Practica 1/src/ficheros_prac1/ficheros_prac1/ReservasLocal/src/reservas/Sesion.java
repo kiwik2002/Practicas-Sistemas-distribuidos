@@ -31,8 +31,11 @@ public class Sesion {
      */
     @SuppressWarnings("unchecked")
     public JSONObject toJSON() {
-        // POR IMPLEMENTAR
-        return null; // MODIFICAR
+    	JSONObject info = new JSONObject();
+    	info.put("actividad", actividad);
+    	info.put("hora", hora);
+    	info.put("plazas", plazas);
+        return info; // MODIFICAR
     }
     
     /**

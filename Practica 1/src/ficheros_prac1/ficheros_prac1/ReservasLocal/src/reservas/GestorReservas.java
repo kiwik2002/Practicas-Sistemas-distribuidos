@@ -13,16 +13,22 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 
 public class GestorReservas {
+
+	private static final Vector<Sesion> NULL = null;
 
 	private FileWriter os;			// stream para escribir los datos de las reservas en el fichero
 
 	// Sesiones de la próxima semana indexadas por el día de la semana. Empiezan mañana, cuando se puede reservar
 	final private HashMap<DiaSemana, Vector<Sesion>> sesionesSemana;
 	// Reservas indexadas por el código de usuario
+	
+	
 	final private HashMap<String, Vector<Reserva>> reservas;
 
 	/**
@@ -137,11 +143,29 @@ public class GestorReservas {
 	 * Escribe en el fichero un array JSON con los datos de las reservas guardadas en el diccionario
 	 *
 	 * @param os	stream de escritura asociado al fichero de datos
+	 * @throws IOException 
 	 */
 	@SuppressWarnings("unchecked")
-	private void escribeFichero(FileWriter os) {
+	private void escribeFichero(FileWriter os) throws IOException {
 		// POR IMPLEMENTAR
-
+		JSONArray arrayJSONUsuarios = new JSONArray() ;
+		Set<String> keys = reservas.keySet();
+		for(String key : keys) {
+			JSONArray arrayJSONReservas = new JSONArray() ;
+			Vector<Reserva> reservasUser = reservas.get(key);
+			for(Reserva reserva :reservasUser) {
+				JSONObject objetoJSON = reserva.toJSON();
+				arrayJSONReservas.add(objetoJSON); 
+			}
+			JSONObject usuarioJSON = new JSONObject();
+			usuarioJSON.put("codigo", key);
+	        usuarioJSON.put("reservas", arrayJSONReservas);
+			arrayJSONUsuarios.add(usuarioJSON);
+		}
+		os.write(arrayJSONUsuarios.toJSONString());
+		os.flush();
+		
+		
 	}
 
 
@@ -180,7 +204,24 @@ public class GestorReservas {
 	 * @param array	JSONArray con los datos de los paquetes
 	 */
 	private void rellenaDiccionarios(JSONArray array) {
-        // POR IMPLEMENTAR
+		Iterator<JSONObject> iterJsonObject = array.iterator();
+		while(iterJsonObject.hasNext()) {
+			JSONObject info = iterJsonObject.next();
+			//aqui tienes que extraer info del Usuario
+			String codigoCliente = info.get("codigo").toString();
+			JSONArray infoReservasUsuario = (JSONArray) info.get("reservas"); 
+			Iterator<JSONObject> iterReservas = infoReservasUsuario.iterator();
+			Vector<Reserva> reservasUsuario = new Vector();
+			while(iterReservas.hasNext()) {
+				JSONObject inforeserva = iterReservas.next();
+				Reserva nuevaReserva = new Reserva(inforeserva);
+				reservasUsuario.add(nuevaReserva);
+					
+			}	
+			reservas.put(codigoCliente, reservasUsuario);
+		
+		}
+        
 	}
 
 
@@ -194,8 +235,15 @@ public class GestorReservas {
 	 * @return La sesión encontrada o `null` si no existe una sesión con esos parámetros.
 	 */
 	Sesion buscaSesion(String actividad, DiaSemana dia, long hora) {
-        // POR IMPLEMENTAR
-        return null; // MODIFICAR
+        Vector<Sesion> sesionesDia = sesionesSemana.get(dia);
+        if(sesionesDia != null) {
+        	for(Sesion  clase : sesionesDia){
+        		if(clase.getActividad().equals(actividad) && clase.getHora() == hora ) {
+        			return clase;
+        		}
+        	}
+        }
+        return null; 
 	}
 
 

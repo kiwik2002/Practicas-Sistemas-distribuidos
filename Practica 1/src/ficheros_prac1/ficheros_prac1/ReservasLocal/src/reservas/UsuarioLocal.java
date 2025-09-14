@@ -32,6 +32,16 @@ public class UsuarioLocal {
         teclado.nextLine(); // Elimina retorno de carro del buffer de entrada
         return opcion;
     }
+    //metodo parar solicitar las actividades para evitar repetir codigo
+    private static String solActividad(Scanner teclado) {
+    	System.out.print("Introduce la actividad");
+    	return teclado.nextLine();
+    }
+    //metodo para solicitar horas y evitar repetir codigo 
+    private static Long solHora(Scanner teclado) {
+    	System.out.print("Introduce la actividad");
+    	return Long.valueOf(teclado.nextLine());
+    }
 
     /**
      * Programa principal. Muestra el menú repetidamente y atiende las peticiones del usuario.
@@ -54,28 +64,35 @@ public class UsuarioLocal {
             switch (opcion) {
                 case 0 -> { // Guardar los datos en el fichero y salir del programa
 
-                    // POR IMPLEMENTAR
-
-
+                	gestor.guardaDatos();
+                	System.out.print("Sesión cerrada y datos guardados");
+                	System.exit(0);
                 }
                 case 1 -> { // Listar los paquetes enviados por el cliente
-
                     // POR IMPLEMENTAR
-
-
+                	   JSONArray reservas = gestor.listaReservasUsuario(codUsuario);
+                       if (reservas.size() == 0) {
+                           System.out.println("No tienes reservas.");
+                       } else {
+                           System.out.println("Tus reservas:");
+                           for (int i = 0; i < reservas.size(); i++) {
+                               System.out.println(reservas.get(i).toString());
+                           }
+                       }
+                		
                 }
                 case 2 -> { // Listar los plazas disponibles de una actividad
-
-                    // POR IMPLEMENTAR
-
+                	String actividad = solActividad(teclado);
+                    gestor.listaPlazasDisponibles(actividad);
+                    
 
 
                 }
                 case 3 -> { // Hacer una reserva
-
-
-                    // POR IMPLEMENTAR
-
+                		
+                	String actividad = solActividad(teclado);
+                	DiaSemana  dia = null ;
+                	gestor.hazReserva(codUsuario, actividad,dia.leerDia(teclado), solHora(teclado));
 
 
                 }
@@ -83,14 +100,16 @@ public class UsuarioLocal {
 
 
                     // POR IMPLEMENTAR
-
+                	System.out.print("Introduce el número de reserva");
+               
+                	//temporal el segundo solHora implementar SolCodigo reserva 
+                	gestor.modificaReserva(codUsuario,solHora(teclado),DiaSemana.leerDia(teclado),solHora(teclado));
 
                 }
                 case 5 -> { // Cancelar una reserva
 
 
-                    // POR IMPLEMENTAR
-
+                		gestor.cancelaReserva(codUsuario,solHora(teclado));
 
 
                 }
