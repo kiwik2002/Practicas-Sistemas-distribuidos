@@ -237,8 +237,11 @@ public class GestorReservas {
 	Sesion buscaSesion(String actividad, DiaSemana dia, long hora) {
         Vector<Sesion> sesionesDia = sesionesSemana.get(dia);
         if(sesionesDia != null) {
+        	System.out.println("hay sesiones");
         	for(Sesion  clase : sesionesDia){
+        		System.out.println(clase.getActividad());
         		if(clase.getActividad().equals(actividad) && clase.getHora() == hora ) {
+        	  		System.out.println(clase.getActividad());
         			return clase;
         		}
         	}
@@ -306,7 +309,7 @@ public class GestorReservas {
 	public JSONObject hazReserva(String codUsuario, String actividad, DiaSemana dia, long hora) {
         // POR IMPLEMENTA
 			Sesion sesion = buscaSesion(actividad,dia,hora);
- 			if(true) {
+ 			if(sesion != null) {
 				//hay una sesion como la que tu quieres vamos a ver si hay sitio
 				long plazas = sesion.getPlazas();
 				if(plazas >= 1) {
@@ -318,6 +321,7 @@ public class GestorReservas {
 						reservas.put(codUsuario, reservasUsuario);
 					}
 					reservasUsuario.add(nuevaReserva);
+					 System.out.println("Reserva de "+codUsuario+"\n actividad "+actividad);
 					return nuevaReserva.toJSON();
 					
 				}else {
