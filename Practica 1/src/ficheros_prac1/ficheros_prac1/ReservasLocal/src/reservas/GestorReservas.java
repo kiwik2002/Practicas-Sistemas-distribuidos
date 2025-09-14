@@ -253,9 +253,18 @@ public class GestorReservas {
 	 * @param codUsuario El código del usuario cuyas reservas se desea listar
 	 * @return Un `JSONArray` que contiene la representación JSON de cada reserva del usuario.
 	 */
+	//duda que hago si el usuario no existe 
 	@SuppressWarnings("unchecked")
 	public JSONArray listaReservasUsuario(String codUsuario) {
         // POR IMPLEMENTAR
+		Vector<Reserva> reservasUsuario = reservas.get(codUsuario);
+		if(reservasUsuario != null) {
+			JSONArray array = new JSONArray();
+			for(Reserva reserva : reservasUsuario) {
+				array.add(reserva.toJSON());
+			}
+			return array ;
+		}
         return null; // MODIFICAR
 	}
 
@@ -270,7 +279,17 @@ public class GestorReservas {
 	@SuppressWarnings("unchecked")
 	public JSONArray listaPlazasDisponibles(String actividad) {
         // POR IMPLEMENTAR
-        return null; // MODIFICAR
+		JSONArray array = new JSONArray();
+		Set<DiaSemana> semana = sesionesSemana.keySet();
+		for(DiaSemana dia  : semana ) {
+			Vector<Sesion> sesionesDia = sesionesSemana.get(dia);
+			for(Sesion sesion : sesionesDia) {
+				if(sesion.getActividad().equals(actividad)&&sesion.getPlazas()>=1) {
+					array.add(sesion.toJSON());
+				}
+			}
+		}
+		return array; // MODIFICAR
 	}
 
 
@@ -285,8 +304,30 @@ public class GestorReservas {
 	 */
 	@SuppressWarnings("unchecked")
 	public JSONObject hazReserva(String codUsuario, String actividad, DiaSemana dia, long hora) {
-        // POR IMPLEMENTAR
-        return null; // MODIFICAR
+        // POR IMPLEMENTA
+			Sesion sesion = buscaSesion(actividad,dia,hora);
+ 			if(true) {
+				//hay una sesion como la que tu quieres vamos a ver si hay sitio
+				long plazas = sesion.getPlazas();
+				if(plazas >= 1) {
+					sesion.setPlazas(plazas-1);
+					Reserva nuevaReserva = new Reserva(codUsuario,actividad,dia,hora);
+					Vector<Reserva> reservasUsuario = reservas.get(codUsuario);
+					if(reservasUsuario==null) {
+						reservasUsuario = new Vector();
+						reservas.put(codUsuario, reservasUsuario);
+					}
+					reservasUsuario.add(nuevaReserva);
+					return nuevaReserva.toJSON();
+					
+				}else {
+					//existe la sesion pero no hay plazas
+					return new JSONObject();
+				}
+ 			}
+		
+		//no hay una sesion
+        return new JSONObject();
 	}
 
 
@@ -299,6 +340,11 @@ public class GestorReservas {
 	 */
 	private Reserva buscaReserva(Vector<Reserva> vector, long codReserva) {
         // POR IMPLEMENTAR
+		for(Reserva reservaUsuario : vector) {
+			if(reservaUsuario.getCodReserva()==codReserva) {
+				return reservaUsuario;
+			}
+		}
         return null; // MODIFICAR
 	}
 
@@ -314,9 +360,27 @@ public class GestorReservas {
 	 * @param nuevoDia Nuevo día de la semana para la reserva.
 	 * @param nuevaHora Nueva hora de la sesión en formato 24 horas.
 	 * @return Un `JSONObject` con la representación de la reserva modificada, o vacío si no se pudo modificar.
+	 * falta agregrar la nueva plaza a la otra actividad
 	 */
 	public JSONObject modificaReserva(String codUsuario, long codReserva, DiaSemana nuevoDia, long nuevaHora) {
         // POR IMPLEMENTAR
+		Vector<Reserva> vector = reservas.get(codUsuario);
+		Reserva reservaActual = buscaReserva(vector,codReserva);
+		String actividad = reservaActual.getActividad();
+		if(reservaActual != null ) {
+			Vector<Sesion> sesionesDia = sesionesSemana.get(nuevoDia);
+			for(Sesion sesion : sesionesDia) {
+				if(sesion.getActividad().equals(actividad)&&sesion.getPlazas()>0&&sesion.getHora()==nuevaHora) {
+					sesion.setPlazas(sesion.getPlazas()-1);
+					//gestion des las  plazas de la actividad cancelada 
+					reservaActual.setDia(nuevoDia);
+					reservaActual.setHora(nuevaHora);
+					return reservaActual.toJSON();
+		
+					
+				}
+			}
+		}
         return null; // MODIFICAR
 	}
 
@@ -327,9 +391,17 @@ public class GestorReservas {
 	 * @param codUsuario Código del usuario que ha hecho la reserva.
 	 * @param codReserva Código único de la reserva a cancelar.
 	 * @return Un `JSONObject` con la representación de la reserva cancelada, o vacío si no se encontró.
+	 * falta agregar la nueva plaza a la actividad
 	 */
 	public JSONObject cancelaReserva(String codUsuario, long codReserva) {
         // POR IMPLEMENTAR
+		Vector<Reserva> reservasUsuario = reservas.get(codUsuario);
+		for(Reserva reserva : reservasUsuario) {
+			if(reserva.getCodReserva() == codReserva) {
+				reservasUsuario.remove(reserva);
+				return reserva.toJSON();
+			}
+		}
         return null; // MODIFICAR
 	}
 
