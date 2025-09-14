@@ -330,10 +330,27 @@ public class GestorReservas {
 	 * @param nuevoDia Nuevo día de la semana para la reserva.
 	 * @param nuevaHora Nueva hora de la sesión en formato 24 horas.
 	 * @return Un `JSONObject` con la representación de la reserva modificada, o vacío si no se pudo modificar.
+	 * falta agregrar la nueva plaza a la otra actividad
 	 */
 	public JSONObject modificaReserva(String codUsuario, long codReserva, DiaSemana nuevoDia, long nuevaHora) {
         // POR IMPLEMENTAR
+		Vector<Reserva> vector = reservas.get(codUsuario);
+		Reserva reservaActual = buscaReserva(vector,codReserva);
+		String actividad = reservaActual.getActividad();
+		if(reservaActual != null ) {
+			Vector<Sesion> sesionesDia = sesionesSemana.get(nuevoDia);
+			for(Sesion sesion : sesionesDia) {
+				if(sesion.getActividad().equals(actividad)&&sesion.getPlazas()>0&&sesion.getHora()==nuevaHora) {
+					sesion.setPlazas(sesion.getPlazas()-1);
+					//gestion des las  plazas de la actividad cancelada 
+					reservaActual.setDia(nuevoDia);
+					reservaActual.setHora(nuevaHora);
+					return reservaActual.toJSON();
 		
+					
+				}
+			}
+		}
         return null; // MODIFICAR
 	}
 
@@ -344,12 +361,14 @@ public class GestorReservas {
 	 * @param codUsuario Código del usuario que ha hecho la reserva.
 	 * @param codReserva Código único de la reserva a cancelar.
 	 * @return Un `JSONObject` con la representación de la reserva cancelada, o vacío si no se encontró.
+	 * falta agregar la nueva plaza a la actividad
 	 */
 	public JSONObject cancelaReserva(String codUsuario, long codReserva) {
         // POR IMPLEMENTAR
 		Vector<Reserva> reservasUsuario = reservas.get(codUsuario);
 		for(Reserva reserva : reservasUsuario) {
 			if(reserva.getCodReserva() == codReserva) {
+				reservasUsuario.remove(reserva);
 				return reserva.toJSON();
 			}
 		}
