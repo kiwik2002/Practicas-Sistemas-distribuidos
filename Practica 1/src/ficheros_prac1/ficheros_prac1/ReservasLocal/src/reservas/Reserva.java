@@ -63,7 +63,7 @@ public class Reserva implements Serializable {
         info.put("codReserva",codReserva);
         info.put("codUsuario", codUsuario);
         info.put("actividad", actividad);
-        info.put("dia", dia);
+        info.put("dia", dia.toString());
         info.put("hora", hora);
         return info; // MODIFICAR
     }

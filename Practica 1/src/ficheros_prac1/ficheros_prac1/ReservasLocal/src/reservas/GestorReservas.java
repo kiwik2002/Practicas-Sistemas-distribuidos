@@ -237,11 +237,9 @@ public class GestorReservas {
 	Sesion buscaSesion(String actividad, DiaSemana dia, long hora) {
         Vector<Sesion> sesionesDia = sesionesSemana.get(dia);
         if(sesionesDia != null) {
-        	System.out.println("hay sesiones");
+
         	for(Sesion  clase : sesionesDia){
-        		System.out.println(clase.getActividad());
         		if(clase.getActividad().equals(actividad) && clase.getHora() == hora ) {
-        	  		System.out.println(clase.getActividad());
         			return clase;
         		}
         	}

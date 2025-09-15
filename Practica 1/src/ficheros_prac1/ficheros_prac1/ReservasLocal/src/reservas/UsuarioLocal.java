@@ -1,5 +1,6 @@
 package ficheros_prac1.ficheros_prac1.ReservasLocal.src.reservas;
 
+import java.util.Iterator;
 import java.util.Scanner;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -83,7 +84,12 @@ public class UsuarioLocal {
                 }
                 case 2 -> { // Listar los plazas disponibles de una actividad
                 	String actividad = solActividad(teclado);
-                    gestor.listaPlazasDisponibles(actividad);
+                   JSONArray array = gestor.listaPlazasDisponibles(actividad);
+                   Iterator<JSONObject> iterJSON  = array.iterator(); 
+                   while(iterJSON.hasNext()) {
+                	   JSONObject objeto = iterJSON.next();
+                	   System.out.printf("actividad %s : hora : %d - plazas : %d \n",objeto.get("actividad"),objeto.get("hora"),objeto.get("plazas"));
+                   }
                     
 
 
