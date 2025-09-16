@@ -39,9 +39,13 @@ public class UsuarioLocal {
     	return teclado.nextLine();
     }
     //metodo para solicitar horas y evitar repetir codigo 
-    private static Long solHora(Scanner teclado) {
+    private  static  Long solHora(Scanner teclado) {
     	System.out.print("Introduce la hora de la actividad");
     	return Long.valueOf(teclado.nextLine());
+    }
+    private static  Long solCodReserva(Scanner teclado) {
+       System.out.print("Introduce el número de reserva");
+   	    return Long.valueOf(teclado.nextLine());
     }
 
     /**
@@ -75,9 +79,10 @@ public class UsuarioLocal {
                        if (reservas.size() == 0) {
                            System.out.println("No tienes reservas.");
                        } else {
-                           System.out.println("Tus reservas:");
+                           System.out.println("Tus reservas: \n");
                            for (int i = 0; i < reservas.size(); i++) {
-                               System.out.println(reservas.get(i).toString());
+                        	   JSONObject obj = (JSONObject) reservas.get(i);
+                               System.out.printf("actividiad : %s - dia - %s : hora - %d codigoReserva : %s \n",obj.get("actividad"),obj.get("dia").toString(),obj.get("hora"),obj.get("codReserva"));
                            }
                        }
                 		
@@ -88,7 +93,7 @@ public class UsuarioLocal {
                    Iterator<JSONObject> iterJSON  = array.iterator(); 
                    while(iterJSON.hasNext()) {
                 	   JSONObject objeto = iterJSON.next();
-                	   System.out.printf("actividad %s : hora : %d - plazas : %d \n",objeto.get("actividad"),objeto.get("hora"),objeto.get("plazas"));
+                	   System.out.printf("actividad %s : dia %S :  hora : %d - plazas : %d \n",objeto.get("actividad"),objeto.get("dia").toString(),objeto.get("hora"),objeto.get("plazas"));
                    }
                     
 
@@ -99,23 +104,15 @@ public class UsuarioLocal {
                 	String actividad = solActividad(teclado);
                 	DiaSemana  dia = null ;
                 	gestor.hazReserva(codUsuario, actividad,dia.leerDia(teclado), solHora(teclado));
-
+                			
 
                 }
                 case 4 -> { // Cambiar de día y hora una reserva
-
-
-                    // POR IMPLEMENTAR
-                	System.out.print("Introduce el número de reserva");
-               
-                	//temporal el segundo solHora implementar SolCodigo reserva 
-                	gestor.modificaReserva(codUsuario,solHora(teclado),DiaSemana.leerDia(teclado),solHora(teclado));
+                	gestor.modificaReserva(codUsuario,solCodReserva(teclado),DiaSemana.leerDia(teclado),solHora(teclado));
 
                 }
                 case 5 -> { // Cancelar una reserva
-
-
-                		gestor.cancelaReserva(codUsuario,solHora(teclado));
+                		gestor.cancelaReserva(codUsuario,solCodReserva(teclado));
 
 
                 }
