@@ -48,7 +48,8 @@ public class Reserva implements Serializable {
     	this.actividad = jsonReserva.get("actividad").toString();
 		this.hora = Long.valueOf(jsonReserva.get("hora").toString());
 		this.dia = DiaSemana.valueOf(jsonReserva.get("dia").toString());
-		this.codReserva = generaCodReserva();
+		this.codReserva = Long.valueOf(jsonReserva.get("codReserva").toString());
+ ;
 		
     }
 

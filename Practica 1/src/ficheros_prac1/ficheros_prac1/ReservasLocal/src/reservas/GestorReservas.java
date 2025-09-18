@@ -176,34 +176,26 @@ public class GestorReservas {
 	 * @param is Stream de lectura del archivo que contiene los datos en formato JSON.
 	 */
 	private void leeFichero(FileReader is) {
-        JSONParser parser = new JSONParser();
-        try (BufferedReader br = new BufferedReader(is)) {
-            br.mark(1);
-            int firstChar = br.read();
-            if (firstChar == -1) {                 // archivo vacío
-                System.out.println("Archivo JSON vacío, generando datos por defecto...");
-                generaReservas();
-            }
-            br.reset();                             // volvemos al inicio
-        	
-            
-            JSONArray array = (JSONArray) parser.parse(br);
-            if (array != null && !array.isEmpty()) {
-                rellenaDiccionarios(array);
-            } else {
-                System.err.println("Advertencia: El archivo JSON está vacío o no contiene datos válidos.");
-                generaReservas(); // Generar datos por defecto
-            }
-        } catch (IOException e) {
-            System.err.println("Error al leer el archivo JSON: " + e.getMessage());
-            e.printStackTrace();
-        } catch (ParseException e) {
-            System.err.println("Error al parsear el archivo JSON: " + e.getMessage());
-            e.printStackTrace();
-            // En caso de error de parseo, generar datos por defecto
-            generaReservas();
-        }
-    }
+		JSONParser parser = new JSONParser();
+
+		try {
+			// Leemos toda la información del fichero en un array de objetos JSON
+			JSONArray array = (JSONArray) parser.parse(is);
+
+			// Si hay sesiones, las incluimos en el diccionario
+			if (array != null && !array.isEmpty()) {
+				rellenaDiccionarios(array);
+			} else {
+				System.err.println("Advertencia: El archivo JSON está vacío o no contiene datos válidos.");
+			}
+		} catch (IOException e) {
+			System.err.println("Error al leer el archivo JSON: " + e.getMessage());
+			e.printStackTrace();
+		} catch (ParseException e) {
+			System.err.println("Error al parsear el archivo JSON: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
 	
 
 	/**
@@ -219,14 +211,12 @@ public class GestorReservas {
 			String codigoCliente = info.get("codigo").toString();
 			JSONArray infoReservasUsuario = (JSONArray) info.get("reservas"); 
 			Iterator<JSONObject> iterReservas = infoReservasUsuario.iterator();
-			Vector<Reserva> reservasUsuario = new Vector();
 			while(iterReservas.hasNext()) {
 				JSONObject inforeserva = iterReservas.next();
-				Reserva nuevaReserva = new Reserva(inforeserva);
-				reservasUsuario.add(nuevaReserva);
+				Reserva reserva = new Reserva(inforeserva);
+				indexarReserva(reserva);
 					
-			}	
-			reservas.put(codigoCliente, reservasUsuario);
+			}
 		
 		}
         
@@ -317,30 +307,11 @@ public class GestorReservas {
 	@SuppressWarnings("unchecked")
 	public JSONObject hazReserva(String codUsuario, String actividad, DiaSemana dia, long hora) {
         // POR IMPLEMENTA
-			Sesion sesion = buscaSesion(actividad,dia,hora);
- 			if(sesion != null) {
-				//hay una sesion como la que tu quieres vamos a ver si hay sitio
-				long plazas = sesion.getPlazas();
-				if(plazas >= 1) {
-					sesion.setPlazas(plazas-1);
-					Reserva nuevaReserva = new Reserva(codUsuario,actividad,dia,hora);
-					Vector<Reserva> reservasUsuario = reservas.get(codUsuario);
-					if(reservasUsuario==null) {
-						reservasUsuario = new Vector();
-						reservas.put(codUsuario, reservasUsuario);
-					}
-					reservasUsuario.add(nuevaReserva);
-					 System.out.println("Reserva de "+codUsuario+"\n actividad "+actividad);
-					return nuevaReserva.toJSON();
-					
-				}else {
-					//existe la sesion pero no hay plazas
-					return new JSONObject();
-				}
- 			}
-		
-		//no hay una sesion
-        return new JSONObject();
+	    Reserva nuevaReserva = new Reserva(codUsuario,actividad,dia,hora);
+		if(indexarReserva(nuevaReserva)){
+			return nuevaReserva.toJSON();
+		}
+		return new JSONObject();
 	}
 
 
@@ -378,24 +349,32 @@ public class GestorReservas {
 	public JSONObject modificaReserva(String codUsuario, long codReserva, DiaSemana nuevoDia, long nuevaHora) {
         // POR IMPLEMENTAR
 		Vector<Reserva> vector = reservas.get(codUsuario);
+	    if (vector == null) {
+	        System.out.printf("El usuario %s no tiene reservas.\n", codUsuario);
+	        return new JSONObject();
+	    }
 		Reserva reservaActual = buscaReserva(vector,codReserva);
-		String actividad = reservaActual.getActividad();
-		long horaAnterior = reservaActual.getHora();
-		DiaSemana diaAnterior = reservaActual.getDia();
 		if(reservaActual != null ) {
+			String actividad = reservaActual.getActividad();
+			long horaAnterior = reservaActual.getHora();
+			DiaSemana diaAnterior = reservaActual.getDia();
 			Vector<Sesion> sesionesDia = sesionesSemana.get(nuevoDia);
 			for(Sesion sesion : sesionesDia) {
 				if(sesion.getActividad().equals(actividad)&&sesion.getPlazas()>0&&sesion.getHora()==nuevaHora) {
-					Sesion sesionAnterior = buscaSesion(actividad,horaAnterior,diaAnterior);
+					Sesion sesionAnterior = buscaSesion(actividad,diaAnterior,horaAnterior);
 					sesionAnterior.setPlazas(sesionAnterior.getPlazas()+1);
 					sesion.setPlazas(sesion.getPlazas()-1);
 					reservaActual.setHora(nuevaHora);
 					reservaActual.setDia(nuevoDia);
+					System.out.printf("Reserva modificada con exito \n ");
+					System.out.printf("Reserva Modificada Actividad : %s - dia : %s - hora : %d",actividad,nuevoDia.toString(),nuevaHora);
 					return reservaActual.toJSON();
 				}
 			}
 		}
-        return null; // MODIFICAR
+		
+		System.out.printf("No existe ninguna reserva con este codigo %d \n ",codReserva);
+        return new JSONObject(); // MODIFICAR
 	}
 
 
@@ -410,28 +389,47 @@ public class GestorReservas {
 	public JSONObject cancelaReserva(String codUsuario, long codReserva) {
         // POR IMPLEMENTAR
 		Vector<Reserva> reservasUsuario = reservas.get(codUsuario);
+	    if (reservasUsuario == null) {
+	        System.out.printf("El usuario %s no tiene reservas.\n", codUsuario);
+	        return new JSONObject();
+	    }
 		for(Reserva reserva : reservasUsuario) {
 			if(reserva.getCodReserva() == codReserva) {
 				String actividad = reserva.getActividad();
 				long hora = reserva.getHora();
 				DiaSemana dia = reserva.getDia();
-				Sesion sesion = buscaSesion(actividad,hora,dia);
+				Sesion sesion = buscaSesion(actividad,dia,hora);
 				sesion.setPlazas(sesion.getPlazas()+1);
 				reservasUsuario.remove(reserva);
+				System.out.printf("Tu reserva ha sido cancelada con exito \n ");
+				System.out.printf("usuario : %s - Actividad : %s - dia : %s - hora  \n",codUsuario,actividad,hora );
 				return reserva.toJSON();
 			}
 		}
-        return null; // MODIFICAR
+		System.out.printf("No existe ninguna reserva de %s con este codigo de reserva  \n ",codUsuario,codReserva);
+        return new JSONObject(); // MODIFICAR
 	}
-private Sesion buscaSesion(String actividad,long hora,DiaSemana dia ) {
-		Vector<Sesion> sesionesDia = sesionesSemana.get(dia);
-		for(Sesion sesion : sesionesDia) {
-			if(sesion.getActividad().equals(actividad)&&sesion.getHora()==hora){
-				return sesion;
+
+		private Boolean indexarReserva(Reserva reserva) {
+			String actividad = reserva.getActividad();
+			long hora = reserva.getHora();
+			DiaSemana dia = reserva.getDia();
+			String codUsuario = reserva.getCodUsuario();
+			Sesion sesion = buscaSesion(actividad,dia,hora);
+			if(sesion != null) {
+				if(sesion.getPlazas()>0) {
+					sesion.setPlazas(sesion.getPlazas()-1);
+					Vector<Reserva> reservasUsuario = reservas.get(codUsuario);
+					if(reservasUsuario==null) {
+						reservasUsuario = new Vector<Reserva>();
+						reservas.put(codUsuario, reservasUsuario);
+					}
+					reservasUsuario.add(reserva);
+						return true;
+					
+					}
 			}
+			return false;
+		
 		}
-		return null;
-}
-
-
 }

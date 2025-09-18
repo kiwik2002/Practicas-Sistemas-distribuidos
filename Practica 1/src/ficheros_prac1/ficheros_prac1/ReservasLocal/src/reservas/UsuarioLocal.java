@@ -47,7 +47,12 @@ public class UsuarioLocal {
        System.out.print("Introduce el número de reserva");
    	    return Long.valueOf(teclado.nextLine());
     }
-
+    private static void mostrarReservas(JSONObject obj) {
+	     System.out.printf("actividiad : %s - dia - %s : hora - %d codigoReserva : %s \n",obj.get("actividad"),obj.get("dia").toString(),obj.get("hora"),obj.get("codReserva"));
+    }
+    private static void mostrarSesion(JSONObject obj) {
+   	   System.out.printf("actividad %s : dia %S :  hora : %d - plazas : %d \n",obj.get("actividad"),obj.get("dia").toString(),obj.get("hora"),obj.get("plazas"));
+    }
     /**
      * Programa principal. Muestra el menú repetidamente y atiende las peticiones del usuario.
      *
@@ -82,7 +87,7 @@ public class UsuarioLocal {
                            System.out.println("Tus reservas: \n");
                            for (int i = 0; i < reservas.size(); i++) {
                         	   JSONObject obj = (JSONObject) reservas.get(i);
-                               System.out.printf("actividiad : %s - dia - %s : hora - %d codigoReserva : %s \n",obj.get("actividad"),obj.get("dia").toString(),obj.get("hora"),obj.get("codReserva"));
+                               mostrarReservas(obj);
                            }
                        }
                 		
@@ -93,7 +98,7 @@ public class UsuarioLocal {
                    Iterator<JSONObject> iterJSON  = array.iterator(); 
                    while(iterJSON.hasNext()) {
                 	   JSONObject objeto = iterJSON.next();
-                	   System.out.printf("actividad %s : dia %S :  hora : %d - plazas : %d \n",objeto.get("actividad"),objeto.get("dia").toString(),objeto.get("hora"),objeto.get("plazas"));
+                	   mostrarSesion(objeto);
                    }
                     
 
@@ -103,17 +108,35 @@ public class UsuarioLocal {
                 		
                 	String actividad = solActividad(teclado);
                 	DiaSemana  dia = null ;
-                	gestor.hazReserva(codUsuario, actividad,dia.leerDia(teclado), solHora(teclado));
-                			
+                	JSONObject obj = gestor.hazReserva(codUsuario, actividad,dia.leerDia(teclado), solHora(teclado));
+                	if(!obj.isEmpty()) {
+                		System.out.println("La reserva se realizo con exito ");
+                	    mostrarReservas(obj);
+                	}else {
+                		System.out.println("No se ha podido reservar debido que la actividad no existe o no hay plazas disponibles");
+                	}
 
                 }
                 case 4 -> { // Cambiar de día y hora una reserva
-                	gestor.modificaReserva(codUsuario,solCodReserva(teclado),DiaSemana.leerDia(teclado),solHora(teclado));
+                 	System.out.println("Introduce los valores de la nueva sesion  en dia y hora");
+                 	JSONObject obj = gestor.modificaReserva(codUsuario,solCodReserva(teclado),DiaSemana.leerDia(teclado),solHora(teclado));
+                 	if(!obj.isEmpty()) {
+                		System.out.println("La reserva se modifico con exito ");
+                	    mostrarReservas(obj);
+                	}else {
+                		System.out.println("No se ha podido modificar la reserva debido que la actividad no existe o no hay plazas disponibles");
+                	}
 
                 }
                 case 5 -> { // Cancelar una reserva
-                		gestor.cancelaReserva(codUsuario,solCodReserva(teclado));
-
+                		JSONObject obj = gestor.cancelaReserva(codUsuario,solCodReserva(teclado));
+                		if(!obj.isEmpty()) {
+                    		System.out.println("La reserva se cancelo con exito ");
+                    	    mostrarReservas(obj);
+                    	}else {
+                    		System.out.println("No se ha podido modificar la reserva debido que no has proporcionado el codigo adecuado ");
+                    	}
+                		
 
                 }
 
