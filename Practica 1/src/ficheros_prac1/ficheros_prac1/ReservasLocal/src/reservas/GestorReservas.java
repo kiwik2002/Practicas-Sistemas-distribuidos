@@ -7,7 +7,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -350,7 +349,6 @@ public class GestorReservas {
         // POR IMPLEMENTAR
 		Vector<Reserva> vector = reservas.get(codUsuario);
 	    if (vector == null) {
-	        System.out.printf("El usuario %s no tiene reservas.\n", codUsuario);
 	        return new JSONObject();
 	    }
 		Reserva reservaActual = buscaReserva(vector,codReserva);
@@ -366,14 +364,12 @@ public class GestorReservas {
 					sesion.setPlazas(sesion.getPlazas()-1);
 					reservaActual.setHora(nuevaHora);
 					reservaActual.setDia(nuevoDia);
-					System.out.printf("Reserva modificada con exito \n ");
-					System.out.printf("Reserva Modificada Actividad : %s - dia : %s - hora : %d",actividad,nuevoDia.toString(),nuevaHora);
 					return reservaActual.toJSON();
 				}
 			}
 		}
 		
-		System.out.printf("No existe ninguna reserva con este codigo %d \n ",codReserva);
+
         return new JSONObject(); // MODIFICAR
 	}
 
@@ -390,7 +386,6 @@ public class GestorReservas {
         // POR IMPLEMENTAR
 		Vector<Reserva> reservasUsuario = reservas.get(codUsuario);
 	    if (reservasUsuario == null) {
-	        System.out.printf("El usuario %s no tiene reservas.\n", codUsuario);
 	        return new JSONObject();
 	    }
 		for(Reserva reserva : reservasUsuario) {
@@ -401,12 +396,9 @@ public class GestorReservas {
 				Sesion sesion = buscaSesion(actividad,dia,hora);
 				sesion.setPlazas(sesion.getPlazas()+1);
 				reservasUsuario.remove(reserva);
-				System.out.printf("Tu reserva ha sido cancelada con exito \n ");
-				System.out.printf("usuario : %s - Actividad : %s - dia : %s - hora  \n",codUsuario,actividad,hora );
 				return reserva.toJSON();
 			}
 		}
-		System.out.printf("No existe ninguna reserva de %s con este codigo de reserva  \n ",codUsuario,codReserva);
         return new JSONObject(); // MODIFICAR
 	}
 
